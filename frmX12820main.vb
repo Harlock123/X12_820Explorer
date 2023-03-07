@@ -130,11 +130,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtEntLines.BackColor = System.Drawing.Color.MistyRose
         Me.txtEntLines.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtEntLines.Location = New System.Drawing.Point(8, 92)
+        Me.txtEntLines.Location = New System.Drawing.Point(8, 114)
         Me.txtEntLines.Multiline = True
         Me.txtEntLines.Name = "txtEntLines"
         Me.txtEntLines.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txtEntLines.Size = New System.Drawing.Size(764, 405)
+        Me.txtEntLines.Size = New System.Drawing.Size(923, 456)
         Me.txtEntLines.TabIndex = 0
         Me.txtEntLines.WordWrap = False
         '
@@ -142,15 +142,15 @@ Public Class frmX12820main
         '
         Me.btnOpenHipaaFile.Location = New System.Drawing.Point(4, 4)
         Me.btnOpenHipaaFile.Name = "btnOpenHipaaFile"
-        Me.btnOpenHipaaFile.Size = New System.Drawing.Size(48, 20)
+        Me.btnOpenHipaaFile.Size = New System.Drawing.Size(58, 34)
         Me.btnOpenHipaaFile.TabIndex = 1
         Me.btnOpenHipaaFile.Text = "Open"
         '
         'txtFilename
         '
-        Me.txtFilename.Location = New System.Drawing.Point(68, 4)
+        Me.txtFilename.Location = New System.Drawing.Point(68, 10)
         Me.txtFilename.Name = "txtFilename"
-        Me.txtFilename.Size = New System.Drawing.Size(448, 18)
+        Me.txtFilename.Size = New System.Drawing.Size(448, 22)
         Me.txtFilename.TabIndex = 2
         '
         'txtSTSegment
@@ -159,11 +159,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSTSegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txtSTSegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtSTSegment.Location = New System.Drawing.Point(8, 28)
+        Me.txtSTSegment.Location = New System.Drawing.Point(8, 44)
         Me.txtSTSegment.Multiline = True
         Me.txtSTSegment.Name = "txtSTSegment"
         Me.txtSTSegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtSTSegment.Size = New System.Drawing.Size(764, 64)
+        Me.txtSTSegment.Size = New System.Drawing.Size(923, 64)
         Me.txtSTSegment.TabIndex = 3
         '
         'txtSEsegment
@@ -172,11 +172,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSEsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txtSEsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtSEsegment.Location = New System.Drawing.Point(8, 501)
+        Me.txtSEsegment.Location = New System.Drawing.Point(8, 574)
         Me.txtSEsegment.Multiline = True
         Me.txtSEsegment.Name = "txtSEsegment"
         Me.txtSEsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtSEsegment.Size = New System.Drawing.Size(764, 32)
+        Me.txtSEsegment.Size = New System.Drawing.Size(923, 32)
         Me.txtSEsegment.TabIndex = 4
         '
         'TabControl1
@@ -193,7 +193,7 @@ Public Class frmX12820main
         Me.TabControl1.Location = New System.Drawing.Point(4, 12)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(784, 556)
+        Me.TabControl1.Size = New System.Drawing.Size(943, 629)
         Me.TabControl1.TabIndex = 5
         '
         'TabPage1
@@ -204,9 +204,9 @@ Public Class frmX12820main
         Me.TabPage1.Controls.Add(Me.txtEntLines)
         Me.TabPage1.Controls.Add(Me.txtSTSegment)
         Me.TabPage1.Controls.Add(Me.txtFilename)
-        Me.TabPage1.Location = New System.Drawing.Point(4, 21)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 30)
         Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Size = New System.Drawing.Size(776, 531)
+        Me.TabPage1.Size = New System.Drawing.Size(935, 595)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "Capitation (820)"
         '
@@ -218,9 +218,9 @@ Public Class frmX12820main
         Me.TabPage2.Controls.Add(Me.txt834DTPsegment)
         Me.TabPage2.Controls.Add(Me.txt834STsegment)
         Me.TabPage2.Controls.Add(Me.txt834Filename)
-        Me.TabPage2.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage2.Location = New System.Drawing.Point(4, 30)
         Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Size = New System.Drawing.Size(776, 530)
+        Me.TabPage2.Size = New System.Drawing.Size(935, 595)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Membership (834)"
         '
@@ -228,7 +228,7 @@ Public Class frmX12820main
         '
         Me.btnOpen834File.Location = New System.Drawing.Point(4, 4)
         Me.btnOpen834File.Name = "btnOpen834File"
-        Me.btnOpen834File.Size = New System.Drawing.Size(48, 20)
+        Me.btnOpen834File.Size = New System.Drawing.Size(58, 31)
         Me.btnOpen834File.TabIndex = 6
         Me.btnOpen834File.Text = "Open"
         '
@@ -238,11 +238,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt834SEsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt834SEsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt834SEsegment.Location = New System.Drawing.Point(8, 496)
+        Me.txt834SEsegment.Location = New System.Drawing.Point(8, 569)
         Me.txt834SEsegment.Multiline = True
         Me.txt834SEsegment.Name = "txt834SEsegment"
         Me.txt834SEsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt834SEsegment.Size = New System.Drawing.Size(764, 32)
+        Me.txt834SEsegment.Size = New System.Drawing.Size(923, 32)
         Me.txt834SEsegment.TabIndex = 9
         '
         'txt834DTPsegment
@@ -252,11 +252,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt834DTPsegment.BackColor = System.Drawing.Color.MistyRose
         Me.txt834DTPsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt834DTPsegment.Location = New System.Drawing.Point(8, 92)
+        Me.txt834DTPsegment.Location = New System.Drawing.Point(8, 111)
         Me.txt834DTPsegment.Multiline = True
         Me.txt834DTPsegment.Name = "txt834DTPsegment"
         Me.txt834DTPsegment.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txt834DTPsegment.Size = New System.Drawing.Size(764, 400)
+        Me.txt834DTPsegment.Size = New System.Drawing.Size(923, 454)
         Me.txt834DTPsegment.TabIndex = 5
         Me.txt834DTPsegment.WordWrap = False
         '
@@ -266,18 +266,18 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt834STsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt834STsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt834STsegment.Location = New System.Drawing.Point(8, 28)
+        Me.txt834STsegment.Location = New System.Drawing.Point(9, 41)
         Me.txt834STsegment.Multiline = True
         Me.txt834STsegment.Name = "txt834STsegment"
         Me.txt834STsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt834STsegment.Size = New System.Drawing.Size(764, 64)
+        Me.txt834STsegment.Size = New System.Drawing.Size(923, 64)
         Me.txt834STsegment.TabIndex = 8
         '
         'txt834Filename
         '
-        Me.txt834Filename.Location = New System.Drawing.Point(68, 4)
+        Me.txt834Filename.Location = New System.Drawing.Point(68, 8)
         Me.txt834Filename.Name = "txt834Filename"
-        Me.txt834Filename.Size = New System.Drawing.Size(448, 18)
+        Me.txt834Filename.Size = New System.Drawing.Size(448, 22)
         Me.txt834Filename.TabIndex = 7
         '
         'TabPage3
@@ -288,9 +288,9 @@ Public Class frmX12820main
         Me.TabPage3.Controls.Add(Me.txt835CLPsegment)
         Me.TabPage3.Controls.Add(Me.txt835STsegment)
         Me.TabPage3.Controls.Add(Me.txt835Filename)
-        Me.TabPage3.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage3.Location = New System.Drawing.Point(4, 30)
         Me.TabPage3.Name = "TabPage3"
-        Me.TabPage3.Size = New System.Drawing.Size(776, 530)
+        Me.TabPage3.Size = New System.Drawing.Size(935, 595)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "Remittance (835)"
         '
@@ -298,7 +298,7 @@ Public Class frmX12820main
         '
         Me.btnOpen835.Location = New System.Drawing.Point(4, 3)
         Me.btnOpen835.Name = "btnOpen835"
-        Me.btnOpen835.Size = New System.Drawing.Size(48, 20)
+        Me.btnOpen835.Size = New System.Drawing.Size(58, 33)
         Me.btnOpen835.TabIndex = 11
         Me.btnOpen835.Text = "Open"
         '
@@ -308,11 +308,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt835SEsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt835SEsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt835SEsegment.Location = New System.Drawing.Point(8, 495)
+        Me.txt835SEsegment.Location = New System.Drawing.Point(8, 568)
         Me.txt835SEsegment.Multiline = True
         Me.txt835SEsegment.Name = "txt835SEsegment"
         Me.txt835SEsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt835SEsegment.Size = New System.Drawing.Size(764, 32)
+        Me.txt835SEsegment.Size = New System.Drawing.Size(923, 32)
         Me.txt835SEsegment.TabIndex = 14
         '
         'txt835CLPsegment
@@ -322,11 +322,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt835CLPsegment.BackColor = System.Drawing.Color.MistyRose
         Me.txt835CLPsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt835CLPsegment.Location = New System.Drawing.Point(8, 91)
+        Me.txt835CLPsegment.Location = New System.Drawing.Point(8, 112)
         Me.txt835CLPsegment.Multiline = True
         Me.txt835CLPsegment.Name = "txt835CLPsegment"
         Me.txt835CLPsegment.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txt835CLPsegment.Size = New System.Drawing.Size(764, 400)
+        Me.txt835CLPsegment.Size = New System.Drawing.Size(923, 452)
         Me.txt835CLPsegment.TabIndex = 10
         Me.txt835CLPsegment.WordWrap = False
         '
@@ -336,18 +336,18 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt835STsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt835STsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt835STsegment.Location = New System.Drawing.Point(8, 27)
+        Me.txt835STsegment.Location = New System.Drawing.Point(8, 42)
         Me.txt835STsegment.Multiline = True
         Me.txt835STsegment.Name = "txt835STsegment"
         Me.txt835STsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt835STsegment.Size = New System.Drawing.Size(764, 64)
+        Me.txt835STsegment.Size = New System.Drawing.Size(923, 64)
         Me.txt835STsegment.TabIndex = 13
         '
         'txt835Filename
         '
-        Me.txt835Filename.Location = New System.Drawing.Point(68, 3)
+        Me.txt835Filename.Location = New System.Drawing.Point(68, 8)
         Me.txt835Filename.Name = "txt835Filename"
-        Me.txt835Filename.Size = New System.Drawing.Size(448, 18)
+        Me.txt835Filename.Size = New System.Drawing.Size(448, 22)
         Me.txt835Filename.TabIndex = 12
         '
         'TabPage4
@@ -358,17 +358,17 @@ Public Class frmX12820main
         Me.TabPage4.Controls.Add(Me.txt271HLsegemnts)
         Me.TabPage4.Controls.Add(Me.txt271STsegment)
         Me.TabPage4.Controls.Add(Me.txt271Filename)
-        Me.TabPage4.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage4.Location = New System.Drawing.Point(4, 30)
         Me.TabPage4.Name = "TabPage4"
-        Me.TabPage4.Size = New System.Drawing.Size(776, 530)
+        Me.TabPage4.Size = New System.Drawing.Size(935, 595)
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "Benefit Info (271)"
         '
         'btnOpen271
         '
-        Me.btnOpen271.Location = New System.Drawing.Point(4, 3)
+        Me.btnOpen271.Location = New System.Drawing.Point(8, 5)
         Me.btnOpen271.Name = "btnOpen271"
-        Me.btnOpen271.Size = New System.Drawing.Size(48, 20)
+        Me.btnOpen271.Size = New System.Drawing.Size(54, 30)
         Me.btnOpen271.TabIndex = 16
         Me.btnOpen271.Text = "Open"
         '
@@ -378,11 +378,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt271SEsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt271SEsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt271SEsegment.Location = New System.Drawing.Point(8, 495)
+        Me.txt271SEsegment.Location = New System.Drawing.Point(8, 568)
         Me.txt271SEsegment.Multiline = True
         Me.txt271SEsegment.Name = "txt271SEsegment"
         Me.txt271SEsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt271SEsegment.Size = New System.Drawing.Size(764, 32)
+        Me.txt271SEsegment.Size = New System.Drawing.Size(923, 32)
         Me.txt271SEsegment.TabIndex = 19
         '
         'txt271HLsegemnts
@@ -392,11 +392,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt271HLsegemnts.BackColor = System.Drawing.Color.MistyRose
         Me.txt271HLsegemnts.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt271HLsegemnts.Location = New System.Drawing.Point(8, 91)
+        Me.txt271HLsegemnts.Location = New System.Drawing.Point(8, 111)
         Me.txt271HLsegemnts.Multiline = True
         Me.txt271HLsegemnts.Name = "txt271HLsegemnts"
         Me.txt271HLsegemnts.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txt271HLsegemnts.Size = New System.Drawing.Size(764, 400)
+        Me.txt271HLsegemnts.Size = New System.Drawing.Size(923, 453)
         Me.txt271HLsegemnts.TabIndex = 15
         Me.txt271HLsegemnts.WordWrap = False
         '
@@ -406,18 +406,18 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt271STsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt271STsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt271STsegment.Location = New System.Drawing.Point(8, 27)
+        Me.txt271STsegment.Location = New System.Drawing.Point(9, 41)
         Me.txt271STsegment.Multiline = True
         Me.txt271STsegment.Name = "txt271STsegment"
         Me.txt271STsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt271STsegment.Size = New System.Drawing.Size(764, 64)
+        Me.txt271STsegment.Size = New System.Drawing.Size(923, 64)
         Me.txt271STsegment.TabIndex = 18
         '
         'txt271Filename
         '
-        Me.txt271Filename.Location = New System.Drawing.Point(68, 3)
+        Me.txt271Filename.Location = New System.Drawing.Point(68, 9)
         Me.txt271Filename.Name = "txt271Filename"
-        Me.txt271Filename.Size = New System.Drawing.Size(448, 18)
+        Me.txt271Filename.Size = New System.Drawing.Size(448, 22)
         Me.txt271Filename.TabIndex = 17
         '
         'TabPage5
@@ -428,9 +428,9 @@ Public Class frmX12820main
         Me.TabPage5.Controls.Add(Me.txt837EntLines)
         Me.TabPage5.Controls.Add(Me.txt837stsegment)
         Me.TabPage5.Controls.Add(Me.txt837Filename)
-        Me.TabPage5.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage5.Location = New System.Drawing.Point(4, 30)
         Me.TabPage5.Name = "TabPage5"
-        Me.TabPage5.Size = New System.Drawing.Size(776, 530)
+        Me.TabPage5.Size = New System.Drawing.Size(935, 595)
         Me.TabPage5.TabIndex = 4
         Me.TabPage5.Text = "Claim (837)"
         '
@@ -438,7 +438,7 @@ Public Class frmX12820main
         '
         Me.btnOpen837File.Location = New System.Drawing.Point(4, 3)
         Me.btnOpen837File.Name = "btnOpen837File"
-        Me.btnOpen837File.Size = New System.Drawing.Size(48, 20)
+        Me.btnOpen837File.Size = New System.Drawing.Size(58, 38)
         Me.btnOpen837File.TabIndex = 11
         Me.btnOpen837File.Text = "Open"
         '
@@ -448,11 +448,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt837SESegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt837SESegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt837SESegment.Location = New System.Drawing.Point(8, 497)
+        Me.txt837SESegment.Location = New System.Drawing.Point(8, 570)
         Me.txt837SESegment.Multiline = True
         Me.txt837SESegment.Name = "txt837SESegment"
         Me.txt837SESegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt837SESegment.Size = New System.Drawing.Size(764, 32)
+        Me.txt837SESegment.Size = New System.Drawing.Size(923, 32)
         Me.txt837SESegment.TabIndex = 14
         '
         'txt837EntLines
@@ -462,11 +462,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt837EntLines.BackColor = System.Drawing.Color.MistyRose
         Me.txt837EntLines.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt837EntLines.Location = New System.Drawing.Point(8, 91)
+        Me.txt837EntLines.Location = New System.Drawing.Point(8, 117)
         Me.txt837EntLines.Multiline = True
         Me.txt837EntLines.Name = "txt837EntLines"
         Me.txt837EntLines.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txt837EntLines.Size = New System.Drawing.Size(764, 402)
+        Me.txt837EntLines.Size = New System.Drawing.Size(923, 449)
         Me.txt837EntLines.TabIndex = 10
         Me.txt837EntLines.WordWrap = False
         '
@@ -476,18 +476,18 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt837stsegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt837stsegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt837stsegment.Location = New System.Drawing.Point(8, 27)
+        Me.txt837stsegment.Location = New System.Drawing.Point(8, 47)
         Me.txt837stsegment.Multiline = True
         Me.txt837stsegment.Name = "txt837stsegment"
         Me.txt837stsegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt837stsegment.Size = New System.Drawing.Size(764, 64)
+        Me.txt837stsegment.Size = New System.Drawing.Size(923, 64)
         Me.txt837stsegment.TabIndex = 13
         '
         'txt837Filename
         '
-        Me.txt837Filename.Location = New System.Drawing.Point(68, 3)
+        Me.txt837Filename.Location = New System.Drawing.Point(68, 11)
         Me.txt837Filename.Name = "txt837Filename"
-        Me.txt837Filename.Size = New System.Drawing.Size(448, 18)
+        Me.txt837Filename.Size = New System.Drawing.Size(448, 22)
         Me.txt837Filename.TabIndex = 12
         '
         'TabPage6
@@ -498,9 +498,9 @@ Public Class frmX12820main
         Me.TabPage6.Controls.Add(Me.txt277EntsSegment)
         Me.TabPage6.Controls.Add(Me.txt277StSegment)
         Me.TabPage6.Controls.Add(Me.txt277filename)
-        Me.TabPage6.Location = New System.Drawing.Point(4, 21)
+        Me.TabPage6.Location = New System.Drawing.Point(4, 30)
         Me.TabPage6.Name = "TabPage6"
-        Me.TabPage6.Size = New System.Drawing.Size(776, 531)
+        Me.TabPage6.Size = New System.Drawing.Size(935, 595)
         Me.TabPage6.TabIndex = 5
         Me.TabPage6.Text = "Claim Status Response (277)"
         '
@@ -508,7 +508,7 @@ Public Class frmX12820main
         '
         Me.btnOpen277File.Location = New System.Drawing.Point(4, 3)
         Me.btnOpen277File.Name = "btnOpen277File"
-        Me.btnOpen277File.Size = New System.Drawing.Size(48, 20)
+        Me.btnOpen277File.Size = New System.Drawing.Size(58, 38)
         Me.btnOpen277File.TabIndex = 16
         Me.btnOpen277File.Text = "Open"
         '
@@ -518,11 +518,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt277SESegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt277SESegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt277SESegment.Location = New System.Drawing.Point(8, 498)
+        Me.txt277SESegment.Location = New System.Drawing.Point(8, 571)
         Me.txt277SESegment.Multiline = True
         Me.txt277SESegment.Name = "txt277SESegment"
         Me.txt277SESegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt277SESegment.Size = New System.Drawing.Size(764, 32)
+        Me.txt277SESegment.Size = New System.Drawing.Size(923, 32)
         Me.txt277SESegment.TabIndex = 19
         '
         'txt277EntsSegment
@@ -532,11 +532,11 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt277EntsSegment.BackColor = System.Drawing.Color.MistyRose
         Me.txt277EntsSegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt277EntsSegment.Location = New System.Drawing.Point(8, 91)
+        Me.txt277EntsSegment.Location = New System.Drawing.Point(8, 117)
         Me.txt277EntsSegment.Multiline = True
         Me.txt277EntsSegment.Name = "txt277EntsSegment"
         Me.txt277EntsSegment.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.txt277EntsSegment.Size = New System.Drawing.Size(764, 403)
+        Me.txt277EntsSegment.Size = New System.Drawing.Size(923, 450)
         Me.txt277EntsSegment.TabIndex = 15
         Me.txt277EntsSegment.WordWrap = False
         '
@@ -546,46 +546,46 @@ Public Class frmX12820main
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txt277StSegment.BackColor = System.Drawing.Color.RosyBrown
         Me.txt277StSegment.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txt277StSegment.Location = New System.Drawing.Point(8, 27)
+        Me.txt277StSegment.Location = New System.Drawing.Point(8, 47)
         Me.txt277StSegment.Multiline = True
         Me.txt277StSegment.Name = "txt277StSegment"
         Me.txt277StSegment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txt277StSegment.Size = New System.Drawing.Size(764, 64)
+        Me.txt277StSegment.Size = New System.Drawing.Size(923, 64)
         Me.txt277StSegment.TabIndex = 18
         '
         'txt277filename
         '
-        Me.txt277filename.Location = New System.Drawing.Point(68, 3)
+        Me.txt277filename.Location = New System.Drawing.Point(68, 11)
         Me.txt277filename.Name = "txt277filename"
-        Me.txt277filename.Size = New System.Drawing.Size(448, 18)
+        Me.txt277filename.Size = New System.Drawing.Size(448, 22)
         Me.txt277filename.TabIndex = 17
         '
         'btnSmallerFonts
         '
         Me.btnSmallerFonts.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnSmallerFonts.Location = New System.Drawing.Point(640, 0)
+        Me.btnSmallerFonts.Location = New System.Drawing.Point(726, 0)
         Me.btnSmallerFonts.Name = "btnSmallerFonts"
-        Me.btnSmallerFonts.Size = New System.Drawing.Size(72, 20)
+        Me.btnSmallerFonts.Size = New System.Drawing.Size(115, 36)
         Me.btnSmallerFonts.TabIndex = 6
         Me.btnSmallerFonts.Text = "Fonts Smaller"
         '
         'btnBiggerFonts
         '
         Me.btnBiggerFonts.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnBiggerFonts.Location = New System.Drawing.Point(716, 0)
+        Me.btnBiggerFonts.Location = New System.Drawing.Point(847, 0)
         Me.btnBiggerFonts.Name = "btnBiggerFonts"
-        Me.btnBiggerFonts.Size = New System.Drawing.Size(72, 20)
+        Me.btnBiggerFonts.Size = New System.Drawing.Size(100, 36)
         Me.btnBiggerFonts.TabIndex = 7
         Me.btnBiggerFonts.Text = "Fonts Bigger"
         '
         'frmX12820main
         '
-        Me.AutoScaleBaseSize = New System.Drawing.Size(4, 11)
-        Me.ClientSize = New System.Drawing.Size(792, 573)
+        Me.AutoScaleBaseSize = New System.Drawing.Size(6, 15)
+        Me.ClientSize = New System.Drawing.Size(951, 646)
         Me.Controls.Add(Me.btnBiggerFonts)
         Me.Controls.Add(Me.btnSmallerFonts)
         Me.Controls.Add(Me.TabControl1)
-        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Name = "frmX12820main"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "X12 820/834/835/837/271/277 Explorer"
