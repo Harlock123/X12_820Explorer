@@ -1,0 +1,26 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "X12_820Explorer", "X12_820Explorer.vbproj", "{FF4AC2B0-D161-48F4-8EC2-75753E802CD5}"
+EndProject
+Global
+	GlobalSection(VaultVsipSolution-v2) = preSolution
+		VaultHost = https://www.taisoftware.com/VaultService
+		VaultRepositoryID = 1
+		VaultRepositoryGUID = 8639a6e0-20d6-4661-b021-10841a1269b9
+		ProjectCount = 1
+		ProjectRelativeDiskPath1 = X12_820Explorer.vbproj
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF4AC2B0-D161-48F4-8EC2-75753E802CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF4AC2B0-D161-48F4-8EC2-75753E802CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF4AC2B0-D161-48F4-8EC2-75753E802CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4AC2B0-D161-48F4-8EC2-75753E802CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
