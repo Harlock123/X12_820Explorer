@@ -47,17 +47,19 @@ public class WindowTests
         frame.Save(Path.Combine(dir, $"X12Explorer-{name}.png"), Avalonia.Media.Imaging.PngBitmapEncoderOptions.Default);
     }
 
+    // Each sample, with the caret put on a segment worth reading, so its elements show (and the README's picture
+    // of each tab shows them too).
     [AvaloniaTheory]
-    [InlineData("capitation-820.edi", "820")]
-    [InlineData("membership-834.edi", "834")]
-    [InlineData("remittance-835.edi", "835")]
-    [InlineData("eligibility-270.edi", "270")]
-    [InlineData("benefit-info-271.edi", "271")]
-    [InlineData("claim-837.edi", "837")]
-    [InlineData("status-request-276.edi", "276")]
-    [InlineData("claim-status-277.edi", "277")]
-    [InlineData("acknowledgment-999.edi", "999")]
-    public void Each_sample_opens_on_its_own_tab(string name, string code)
+    [InlineData("capitation-820.edi", "820", "RMR*AZ", "RMR01 AZ   ·   RMR02 CAP   ·   RMR03 PO   ·   RMR04 510.00")]
+    [InlineData("membership-834.edi", "834", "HD*021", "HD01 021   ·   HD03 HLT   ·   HD04 GOLD PLAN   ·   HD05 EMP")]
+    [InlineData("remittance-835.edi", "835", "CAS*CO", "CAS01 CO   ·   CAS02 45   ·   CAS03 25.00")]
+    [InlineData("eligibility-270.edi", "270", "EQ*30", "EQ01 30")]
+    [InlineData("benefit-info-271.edi", "271", "EB*B", "EB01 B   ·   EB02 IND   ·   EB03 98   ·   EB06 27   ·   EB07 25.00")]
+    [InlineData("claim-837.edi", "837", "CLM*", "CLM01 PATACCT0001   ·   CLM02 200.00   ·   CLM05 11:B:1")]
+    [InlineData("status-request-276.edi", "276", "AMT*T3*200", "AMT01 T3   ·   AMT02 200.00")]
+    [InlineData("claim-status-277.edi", "277", "STC*", "STC01 A2:20   ·   STC02 20261103   ·   STC04 200.00   ·   STC05 150.00")]
+    [InlineData("acknowledgment-999.edi", "999", "IK4*", "IK401 3   ·   IK402 1251   ·   IK403 8   ·   IK404 20261321")]
+    public void Each_sample_opens_on_its_own_tab(string name, string code, string focus, string elements)
     {
         var w = Show();
         // Open from the first tab's button, whatever the file is.
@@ -72,6 +74,11 @@ public class WindowTests
         Assert.StartsWith(page.Kind.LoopStart + "*", page.LoopsBox.Text);
         Assert.Contains(page.TrailerBox.Text!.Split(Environment.NewLine), l => l.StartsWith("SE*"));
         Assert.Contains(page.Kind.Title, w.Message.Text);
+
+        page.LoopsBox.Focus();
+        page.LoopsBox.CaretIndex = page.LoopsBox.Text!.IndexOf(focus, StringComparison.Ordinal) + 1;
+        Pump();
+        Assert.StartsWith(elements, page.ElementStrip.Text);
         Shot(w, code);
         w.Close();
     }

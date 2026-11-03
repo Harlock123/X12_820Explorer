@@ -156,7 +156,7 @@ public class ParserTests
         Assert.Equal(["ISA", "GS", "ST", "AK1"], header.Select(l => l.Split('*')[0]));
         Assert.Equal("AK1*HC*5*005010X222A1~", header[^1]);
         Assert.Equal(
-            ["AK2*837*0001*005010X222A1~", "    IK5*A~", "AK2*837*0002*005010X222A1~", "    IK3*DTP*19*2400*8~",
+            ["AK2*837*0001*005010X222A1~", "    IK5*A~", "AK2*837*0002*005010X222A1~", "    IK3*DTP*20*2400*8~",
              "    CTX*CLM01:PATACCT0002~", "    IK4*3*1251*8*20261321~", "    IK5*R*5~"],
             views.Loops.Split(Environment.NewLine));
         Assert.Equal(["AK9*P*2*2*1~", "SE*11*0001~", "GE*1*9~", "IEA*1*000000009~"], views.Trailer.Split(Environment.NewLine));

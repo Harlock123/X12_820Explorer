@@ -50,7 +50,7 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
   - `ParserTests` covers delimiters, splitting, transactions, views and elements.
   - `WindowTests` drives the window on Avalonia.Headless.
   - `Samples/*.edi`: made-up files, one per transaction.
-- `Screenshots/`: the README's pictures, from `X12_SHOTS`.
+- `Screenshots/`: the README's pictures, from `X12_SHOTS`: one per sample, named after it, plus `claim-837-second.png`.
 
 ## Rules that keep it working
 
@@ -64,8 +64,10 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
   - a `TransactionKind` in `All`, which gives it a tab and puts it in the window's messages automatically (with
     nine tabs the bar is full at the default width, so keep names short);
   - a made-up sample in `tests/X12Explorer.Tests/Samples`;
-  - a row in `ParserTests.Reads_each_sample` and in `WindowTests.Each_sample_opens_on_its_own_tab`;
-  - a row in the README's table.
+  - a row in `ParserTests.Reads_each_sample` and in `WindowTests.Each_sample_opens_on_its_own_tab`, the latter
+    naming a segment to put the caret on, so the picture shows its elements;
+  - a row in the README's table and a section under "Transaction types", with the picture of its tab copied from
+    `X12_SHOTS` into `Screenshots/` under the sample's name.
 - **No real files in the repository.** Real X12 files carry personal health information. Samples must use made-up
   names, member IDs and amounts.
 - **`legacy/` is for reference.** Don't change it; port the behaviour into `src/` instead.
