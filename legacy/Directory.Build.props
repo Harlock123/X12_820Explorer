@@ -1,0 +1,4 @@
+<Project>
+  <!-- Stops MSBuild picking up the repository's Directory.Build.props (net10.0, warnings as errors), which is for
+       the Avalonia app; this old WinForms project builds on its own in Visual Studio. -->
+</Project>

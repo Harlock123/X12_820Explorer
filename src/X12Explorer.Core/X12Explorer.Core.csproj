@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Reading X12 files: the delimiters, the segments, the transactions and their loops, and the text the window shows. -->
+  <PropertyGroup>
+    <RootNamespace>X12Explorer.Core</RootNamespace>
+  </PropertyGroup>
+</Project>
