@@ -51,9 +51,12 @@ public class WindowTests
     [InlineData("capitation-820.edi", "820")]
     [InlineData("membership-834.edi", "834")]
     [InlineData("remittance-835.edi", "835")]
+    [InlineData("eligibility-270.edi", "270")]
     [InlineData("benefit-info-271.edi", "271")]
     [InlineData("claim-837.edi", "837")]
+    [InlineData("status-request-276.edi", "276")]
     [InlineData("claim-status-277.edi", "277")]
+    [InlineData("acknowledgment-999.edi", "999")]
     public void Each_sample_opens_on_its_own_tab(string name, string code)
     {
         var w = Show();
@@ -67,7 +70,7 @@ public class WindowTests
         Assert.Equal(Sample(name), page.FileName.Text);
         Assert.StartsWith("ISA*", page.HeaderBox.Text);
         Assert.StartsWith(page.Kind.LoopStart + "*", page.LoopsBox.Text);
-        Assert.StartsWith("SE*", page.TrailerBox.Text);
+        Assert.Contains(page.TrailerBox.Text!.Split(Environment.NewLine), l => l.StartsWith("SE*"));
         Assert.Contains(page.Kind.Title, w.Message.Text);
         Shot(w, code);
         w.Close();
@@ -153,7 +156,7 @@ public class WindowTests
         Assert.False(w.Open(notX12));
         Assert.Contains("no ST segment", w.Message.Text);
         Assert.False(w.Open(other));
-        Assert.Contains("is an X12 850", w.Message.Text);
+        Assert.Equal("order.edi is an X12 850; there are tabs for 820, 834, 835, 270, 271, 837, 276, 277 and 999.", w.Message.Text);
         Assert.False(w.Open(Path.Combine(dir, "missing.edi")));
         Assert.Contains("Couldn't read missing.edi", w.Message.Text);
 

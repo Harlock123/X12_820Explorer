@@ -10,7 +10,7 @@ using X12Explorer.Core;
 namespace X12Explorer;
 
 /// <summary>
-/// The window: a tab for each transaction (820, 834, 835, 271, 837, 277), a tool bar with Open and the font
+/// The window: a tab for each transaction (<see cref="TransactionKind.All"/>), a tool bar with Open and the font
 /// buttons, and a status line. A file goes to the tab its ST01 names, whichever Open button opened it, and files can
 /// be dropped on the window too. Built in code; its controls are public so tests can drive them.
 /// </summary>
@@ -48,7 +48,7 @@ public sealed class MainWindow : Window
             var page = new TransactionPage(kind) { Margin = new Thickness(0, 10, 0, 0) };
             page.OpenButton.Click += async (_, _) => await OpenPicked();
             pages[kind.Code] = page;
-            items.Add(new TabItem { Header = kind.Title, Content = page, FontSize = 14 });
+            items.Add(new TabItem { Header = kind.Title, Content = page, FontSize = 13, Padding = new Thickness(10, 0) });
         }
         Pages = pages;
         Tabs.ItemsSource = items;
@@ -78,7 +78,7 @@ public sealed class MainWindow : Window
         });
         AddHandler(KeyDownEvent, OnKey, RoutingStrategies.Tunnel);
 
-        Note("Open an 820, 834, 835, 271, 837 or 277 file, or drop one here. It opens on its own tab.");
+        Note($"Open an X12 file ({TransactionKind.Codes}), or drop one here. It opens on its own tab.");
         if (open != null) Open(open);
     }
 
@@ -111,7 +111,7 @@ public sealed class MainWindow : Window
         }
         if (!Pages.TryGetValue(code, out var page))
         {
-            Note($"{Path.GetFileName(path)} is an X12 {code}; there are tabs for 820, 834, 835, 271, 837 and 277.", error: true);
+            Note($"{Path.GetFileName(path)} is an X12 {code}; there are tabs for {TransactionKind.Codes}.", error: true);
             return false;
         }
 

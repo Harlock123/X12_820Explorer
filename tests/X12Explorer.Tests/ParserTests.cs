@@ -71,9 +71,12 @@ public class ParserTests
     [InlineData("capitation-820.edi", "820", 1, 3)]
     [InlineData("membership-834.edi", "834", 1, 2)]
     [InlineData("remittance-835.edi", "835", 1, 2)]
+    [InlineData("eligibility-270.edi", "270", 1, 3)]
     [InlineData("benefit-info-271.edi", "271", 1, 3)]
     [InlineData("claim-837.edi", "837", 2, 4)]
+    [InlineData("status-request-276.edi", "276", 1, 5)]
     [InlineData("claim-status-277.edi", "277", 1, 4)]
+    [InlineData("acknowledgment-999.edi", "999", 1, 2)]
     public void Reads_each_sample(string name, string code, int transactions, int loops)
     {
         var file = X12File.Load(Sample(name));
@@ -90,7 +93,7 @@ public class ParserTests
             Assert.NotNull(t.GroupEnd);
             Assert.NotNull(t.InterchangeEnd);
         });
-        Assert.Equal(loops, Views.Of(file.Transactions, file.Delimiters, kind.LoopStart, kind.Expanded).LoopCount);
+        Assert.Equal(loops, Views.Of(file.Transactions, file.Delimiters, kind, kind.Expanded).LoopCount);
         Assert.Empty(file.Outside);
     }
 
@@ -141,6 +144,22 @@ public class ParserTests
         Assert.Contains("ROE*RICHARD", second.Loops);
         Assert.DoesNotContain("DOE*JANE", second.Loops);
         Assert.Equal(2, second.LoopCount);
+    }
+
+    [Fact]
+    public void An_acknowledgments_ak9_goes_to_the_trailer_not_the_last_loop()
+    {
+        var file = X12File.Load(Sample("acknowledgment-999.edi"));
+        var views = Views.Of(file.Transactions, file.Delimiters, TransactionKind.Acknowledgment, expanded: true);
+
+        var header = views.Header.Split(Environment.NewLine);
+        Assert.Equal(["ISA", "GS", "ST", "AK1"], header.Select(l => l.Split('*')[0]));
+        Assert.Equal("AK1*HC*5*005010X222A1~", header[^1]);
+        Assert.Equal(
+            ["AK2*837*0001*005010X222A1~", "    IK5*A~", "AK2*837*0002*005010X222A1~", "    IK3*DTP*19*2400*8~",
+             "    CTX*CLM01:PATACCT0002~", "    IK4*3*1251*8*20261321~", "    IK5*R*5~"],
+            views.Loops.Split(Environment.NewLine));
+        Assert.Equal(["AK9*P*2*2*1~", "SE*11*0001~", "GE*1*9~", "IEA*1*000000009~"], views.Trailer.Split(Environment.NewLine));
     }
 
     [Fact]
@@ -202,10 +221,11 @@ public class ParserTests
     }
 
     [Fact]
-    public void Knows_the_six_transactions()
+    public void Knows_the_nine_transactions()
     {
-        Assert.Equal(["820", "834", "835", "271", "837", "277"], TransactionKind.All.Select(k => k.Code));
+        Assert.Equal(["820", "834", "835", "270", "271", "837", "276", "277", "999"], TransactionKind.All.Select(k => k.Code));
+        Assert.Equal("820, 834, 835, 270, 271, 837, 276, 277 and 999", TransactionKind.Codes);
         Assert.Equal("Remittance (835)", TransactionKind.ForCode(" 835 ")!.Title);
-        Assert.Null(TransactionKind.ForCode("999"));
+        Assert.Null(TransactionKind.ForCode("850"));
     }
 }

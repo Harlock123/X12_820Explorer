@@ -6,9 +6,9 @@ how the code is put together and the rules that keep it working.
 ## What this is
 
 A viewer for HIPAA X12 EDI files in C# on .NET 10 and Avalonia 12. It has one tab per transaction: 820, 834, 835,
-271, 837 and 277. Each tab shows the file's header (envelope, ST, and everything before the first loop), its loops,
-and its trailer (SE, GE, IEA), plus the elements of the segment under the caret. It runs on Windows, macOS and
-Linux. The original Windows Forms program is in `legacy/` and is no longer built.
+270, 271, 837, 276, 277 and 999. Each tab shows the file's header (envelope, ST, and everything before the first
+loop), its loops, and its trailer (SE, GE, IEA), plus the elements of the segment under the caret. It runs on
+Windows, macOS and Linux. The original Windows Forms program is in `legacy/` and is no longer built.
 
 ## Commands
 
@@ -32,11 +32,12 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
     - `X12File.Parse` splits the text into segments and groups them into `Transaction`s.
     - Each transaction keeps its ISA and GS, the GE and IEA that close them, and any stray segments before its
       ST (`Before`).
-    - `Transaction.SplitAt(loopStart)` gives the header segments and the loops.
+    - `Transaction.SplitAt(loopStart, closing)` gives the header segments, the loops and any closing segments.
   - `Views.cs`: the text of the three boxes for one transaction or several, a loop per line or a segment per line.
   - `Elements.cs`: the segment under a caret in a box's text, and its elements listed as `CLP01 value`.
-  - `TransactionKind.cs`: the six tabs. Each has its ST01 code, its name, its loop-start segment, and whether it
-    starts with a segment per line.
+  - `TransactionKind.cs`: the nine tabs. Each has its ST01 code, its name, its loop-start segment, and whether it
+    starts with a segment per line. A kind can also name a closing segment (the 999's `AK9`) that ends the loops
+    and goes to the trailer. `Codes` lists the codes for messages.
 - `src/X12Explorer/`: the window, built in code with no XAML.
   - `MainWindow.cs`:
     - The tool bar (Open, text size), the tabs and the status line.
@@ -60,7 +61,8 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
 - **Show every transaction.** The old program showed only the first `ST` of an 820. Here every transaction is
   read, and the tab's list chooses between them.
 - **Adding a transaction type** means:
-  - a `TransactionKind` in `All`, which gives it a tab automatically;
+  - a `TransactionKind` in `All`, which gives it a tab and puts it in the window's messages automatically (with
+    nine tabs the bar is full at the default width, so keep names short);
   - a made-up sample in `tests/X12Explorer.Tests/Samples`;
   - a row in `ParserTests.Reads_each_sample` and in `WindowTests.Each_sample_opens_on_its_own_tab`;
   - a row in the README's table.

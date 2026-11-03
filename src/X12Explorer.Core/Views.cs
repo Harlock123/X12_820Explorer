@@ -12,12 +12,17 @@ public sealed record Views(string Header, string Loops, string Trailer, int Loop
     /// <summary>The indent for a loop's segments after the first, when loops are shown a segment per line.</summary>
     public const string Indent = "    ";
 
+    /// <summary>The views of <paramref name="transactions"/> as <paramref name="kind"/>'s tab splits them.</summary>
+    public static Views Of(IEnumerable<Transaction> transactions, Delimiters delimiters, TransactionKind kind, bool expanded) =>
+        Of(transactions, delimiters, kind.LoopStart, expanded, kind.Closing);
+
     /// <summary>
     /// The views of <paramref name="transactions"/> (one, or all of a file's), split into loops at
     /// <paramref name="loopStart"/>. Expanded puts each segment of a loop on its own line, indented under the loop's
-    /// first; otherwise each loop is one line. Several transactions are shown one after another, a blank line apart.
+    /// first; otherwise each loop is one line. A <paramref name="closing"/> segment (the 999's AK9) and what follows
+    /// it go to the trailer, before SE. Several transactions are shown one after another, a blank line apart.
     /// </summary>
-    public static Views Of(IEnumerable<Transaction> transactions, Delimiters delimiters, string loopStart, bool expanded)
+    public static Views Of(IEnumerable<Transaction> transactions, Delimiters delimiters, string loopStart, bool expanded, string? closing = null)
     {
         var end = delimiters.Shown;
         string Line(Segment s) => s.Text + end;
@@ -41,7 +46,7 @@ public sealed record Views(string Header, string Loops, string Trailer, int Loop
             lastInterchange = t.Interchange;
             lastGroup = t.Group;
 
-            var (head, body) = t.SplitAt(loopStart);
+            var (head, body, close) = t.SplitAt(loopStart, closing);
             header.AppendLine(Line(t.Start));
             foreach (var s in head) header.AppendLine(Line(s));
 
@@ -59,6 +64,7 @@ public sealed record Views(string Header, string Loops, string Trailer, int Loop
                 }
             }
 
+            foreach (var s in close) trailer.AppendLine(Line(s));
             if (t.Trailer is { } se) trailer.AppendLine(Line(se));
             else trailer.AppendLine("(no SE: the file ends inside this transaction)");
         }

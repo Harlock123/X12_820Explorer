@@ -22,18 +22,21 @@ unzip or untar it and run `X12Explorer` (`X12Explorer.exe` on Windows). Nothing 
 | Capitation (820) | Payment order / remittance advice, as used for capitation | `ENT` |
 | Membership (834) | Benefit enrolment and maintenance | `INS` |
 | Remittance (835) | Health care claim payment / advice | `CLP` |
-| Benefit Info (271) | Eligibility, coverage or benefit information | `HL` |
+| Eligibility (270) | Eligibility, coverage or benefit inquiry | `HL` |
+| Benefit Info (271) | Eligibility, coverage or benefit information (the 270's answer) | `HL` |
 | Claim (837) | Health care claim | `HL` |
-| Claim Status Response (277) | Health care claim status | `HL` |
+| Status Request (276) | Health care claim status request | `HL` |
+| Claim Status (277) | Health care claim status response (the 276's answer) | `HL` |
+| Acknowledgment (999) | Implementation acknowledgment: accepted or rejected, and why | `AK2` (`AK9` goes to the trailer) |
 
 - **Open a file from any tab.** It goes to the tab its `ST` segment names. You can also drop a file on the window,
   or name one on the command line (`X12Explorer claims.edi`).
 - **Header, loops and trailer.** The header box shows the `ISA` and `GS` envelope, `ST`, and everything before the
   first loop (`BPR`, `TRN`, the `N1` parties and so on). The trailer shows `SE`, `GE` and `IEA`. Drag the splitters
   to give a box more room.
-- **One line per loop, or one segment per line.** Each loop starts out on one line on the 820, 834, 835 and 271
-  tabs. On the 837 and 277 tabs, each segment starts out on its own line, indented under its `HL`. A tick box
-  switches between the two.
+- **One line per loop, or one segment per line.** Each loop starts out on one line on the 820, 834, 835, 270 and
+  271 tabs. On the 837, 276, 277 and 999 tabs, each segment starts out on its own line, indented under the loop's
+  first segment. A tick box switches between the two.
 - **Every transaction in the file.** When a file holds several `ST`…`SE` transactions, a list picks one, or shows
   them all together.
 - **Elements.** Click a segment in any box and the strip below lists its elements by name: `CLP01 CLAIM0001 ·
@@ -46,10 +49,12 @@ unzip or untar it and run `X12Explorer` (`X12Explorer.exe` on Windows). Nothing 
 
 ![The 837 tab showing the second of two claims, a segment per line](Screenshots/claim-837.png)
 
+![The 999 tab: one claim accepted, one rejected for a bad date, with the AK9 summary in the trailer](Screenshots/acknowledgment-999.png)
+
 ## Trying it
 
 [`tests/X12Explorer.Tests/Samples`](tests/X12Explorer.Tests/Samples) has a small made-up file for each
-transaction. The names, IDs and amounts in them are invented. Don't add real files to the repository: they carry
+transaction. The 999 acknowledges the sample 837. The names, IDs and amounts in them are invented. Don't add real files to the repository: they carry
 personal health information.
 
 ## Building
@@ -69,7 +74,7 @@ dotnet test X12Explorer.slnx
   - `X12File`: splits a file into segments and `ST`…`SE` transactions, each with its envelope.
   - `Views`: the text of the three boxes.
   - `Elements`: finds the segment under the caret and lists its elements.
-  - `TransactionKind`: the six tabs.
+  - `TransactionKind`: the nine tabs.
 - `src/X12Explorer`: the window (`MainWindow`) and one `TransactionPage` per tab, built in code.
 - `tests/X12Explorer.Tests`: xUnit tests for the reader, plus headless window tests. Set `X12_SHOTS` to a folder to
   save pictures of the window; the screenshots here come from them.

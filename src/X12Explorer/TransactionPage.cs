@@ -149,7 +149,7 @@ public sealed class TransactionPage : DockPanel
     private void Show()
     {
         if (_showing || _file == null) return;
-        var views = Views.Of(Shown, _file.Delimiters, Kind.LoopStart, Expanded.IsChecked == true);
+        var views = Views.Of(Shown, _file.Delimiters, Kind, Expanded.IsChecked == true);
         HeaderBox.Text = views.Header;
         LoopsBox.Text = views.Loops;
         TrailerBox.Text = views.Trailer;

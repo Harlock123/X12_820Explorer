@@ -118,7 +118,7 @@ public sealed class Transaction
     /// <summary>The ST segment.</summary>
     public Segment Start { get; }
 
-    /// <summary>ST01: 820, 834, 835, 271, 837, 277 and so on.</summary>
+    /// <summary>ST01: 820, 834, 835, 270, 271, 837, 276, 277, 999 and so on.</summary>
     public string Code => Start[1].Trim();
 
     /// <summary>ST02, the transaction set control number.</summary>
@@ -146,16 +146,20 @@ public sealed class Transaction
 
     /// <summary>
     /// The body split at each <paramref name="loopStart"/> segment: the segments before the first one are the
-    /// header's, and each loop runs from its start segment up to the next.
+    /// header's, and each loop runs from its start segment up to the next. A <paramref name="closing"/> segment
+    /// ends the loops; it and everything after it are returned as the closing segments.
     /// </summary>
-    public (IReadOnlyList<Segment> Header, IReadOnlyList<IReadOnlyList<Segment>> Loops) SplitAt(string loopStart)
+    public (IReadOnlyList<Segment> Header, IReadOnlyList<IReadOnlyList<Segment>> Loops, IReadOnlyList<Segment> Closing)
+        SplitAt(string loopStart, string? closing = null)
     {
         var header = new List<Segment>();
         var loops = new List<IReadOnlyList<Segment>>();
+        var end = new List<Segment>();
         List<Segment>? loop = null;
         foreach (var segment in _body)
         {
-            if (segment.Id == loopStart)
+            if (end.Count > 0 || (closing != null && segment.Id == closing)) end.Add(segment);
+            else if (segment.Id == loopStart)
             {
                 loop = [segment];
                 loops.Add(loop);
@@ -163,6 +167,6 @@ public sealed class Transaction
             else if (loop != null) loop.Add(segment);
             else header.Add(segment);
         }
-        return (header, loops);
+        return (header, loops, end);
     }
 }
