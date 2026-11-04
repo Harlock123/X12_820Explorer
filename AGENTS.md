@@ -8,7 +8,8 @@ how the code is put together and the rules that keep it working.
 A viewer for HIPAA X12 EDI files in C# on .NET 10 and Avalonia 12. It has one tab per transaction: 820, 834, 835,
 270, 271, 837, 276, 277 and 999. Each tab shows the file's header (envelope, ST, and everything before the first
 loop), its loops, and its trailer (SE, GE, IEA), plus the elements of the segment under the caret. It runs on
-Windows, macOS and Linux. The original Windows Forms program is in `legacy/` and is no longer built.
+Windows, macOS and Linux. Started with `--mcp` it is an MCP server instead, with no window, so AI agents can read
+the same files. The original Windows Forms program is in `legacy/` and is no longer built.
 
 ## Commands
 
@@ -16,6 +17,7 @@ Windows, macOS and Linux. The original Windows Forms program is in `legacy/` and
 dotnet build X12Explorer.slnx
 dotnet test X12Explorer.slnx
 dotnet run --project src/X12Explorer [file]
+dotnet run --project src/X12Explorer -- --mcp --root FOLDER   # the MCP server on stdio
 X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of the window, headless
 ```
 
@@ -38,6 +40,15 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
   - `TransactionKind.cs`: the nine tabs. Each has its ST01 code, its name, its loop-start segment, and whether it
     starts with a segment per line. A kind can also name a closing segment (the 999's `AK9`) that ends the loops
     and goes to the trailer. `Codes` lists the codes for messages.
+  - `Checks.cs`: the envelope's bookkeeping (SE, GE and IEA counts and control numbers), as `Problem`s.
+- `src/X12Explorer.Mcp/`: the MCP server, on the official C# SDK (`ModelContextProtocol.Core`), with no Avalonia.
+  - `X12Server.cs`: the server's instructions and options. `McpCommandLine` parses `--mcp [--root FOLDER]` and
+    serves on the streams it is given (stdio from `Program.Main`, pipes in the tests).
+  - `X12Tools.cs`: the seven tools, read by reflection from their `[McpServerTool]` attributes. Parameter names
+    are snake_case because they are the JSON names agents see.
+  - `Summaries.cs`: `summarize`, one reader per transaction type.
+  - `Codes.cs`: the meanings of the code lists the summaries report.
+  - `Workspace.cs`: the folder files are read from. `Resolve` refuses anything outside it.
 - `src/X12Explorer/`: the window, built in code with no XAML.
   - `MainWindow.cs`:
     - The tool bar (Open, text size), the tabs and the status line.
@@ -49,6 +60,8 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
 - `tests/X12Explorer.Tests/`: xUnit v3.
   - `ParserTests` covers delimiters, splitting, transactions, views and elements.
   - `WindowTests` drives the window on Avalonia.Headless.
+  - `McpTests` drives the server through an MCP client over in-memory pipes, on copies of the samples in a temp
+    folder, and once starts the real program with `--mcp`.
   - `Samples/*.edi`: made-up files, one per transaction.
 - `Screenshots/`: the README's pictures, from `X12_SHOTS`: one per sample, named after it, plus `claim-837-second.png`.
 
@@ -67,7 +80,15 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
   - a row in `ParserTests.Reads_each_sample` and in `WindowTests.Each_sample_opens_on_its_own_tab`, the latter
     naming a segment to put the caret on, so the picture shows its elements;
   - a row in the README's table and a section under "Transaction types", with the picture of its tab copied from
-    `X12_SHOTS` into `Screenshots/` under the sample's name.
+    `X12_SHOTS` into `Screenshots/` under the sample's name;
+  - a reader in `Summaries.Of` if `summarize` should know its layout (otherwise it lists the HL hierarchy for the
+    270 and 276, or the segment counts for anything else).
+- **The MCP server only reads.** Every tool is marked read-only, and file paths go through `Workspace.Resolve`. A
+  tool that writes, or reads outside the folder, would change what the README promises.
+- **Only MCP on stdout.** In `--mcp` mode stdout carries the protocol. Messages for a person go to stderr.
+- **Numbers count from 1.** Segment, transaction and loop numbers in tool results and arguments count from 1, as
+  a person reading the file would. `Segment.Index` counts from 0, so add 1 on the way out.
+- **New tools and summaries** need a test in `McpTests` and a line in the README's tool table.
 - **No real files in the repository.** Real X12 files carry personal health information. Samples must use made-up
   names, member IDs and amounts.
 - **`legacy/` is for reference.** Don't change it; port the behaviour into `src/` instead.

@@ -214,6 +214,38 @@ The receiver of a batch says whether each transaction in it passed its checks an
 
 ![The 999 tab: one claim accepted, one rejected, with an IK4 error's elements and AK9 in the trailer](Screenshots/acknowledgment-999.png)
 
+## AI agents (MCP)
+
+X12 Explorer is also an [MCP](https://modelcontextprotocol.io/) server, so an AI agent such as Claude Code can
+read X12 files with the same parser the window uses. Started with `--mcp` it opens no window and serves MCP on
+stdio. It only reads, and only inside one folder: the current folder, or the one `--root` names. Paths that lead
+outside it, through `..`, an absolute path or a link, are refused.
+
+For Claude Code:
+
+```
+claude mcp add x12explorer -- /path/to/X12Explorer --mcp --root /path/to/edi-files
+```
+
+The tools:
+
+| Tool | What it does |
+|---|---|
+| `list_files` | The X12 files in the folder: any file that starts with `ISA` or `ST`, whatever its extension. |
+| `open_file` | The delimiters, each interchange, group and transaction, and a count of envelope problems. |
+| `summarize` | What a transaction says, with code meanings beside the codes. For an 835: the payment, each claim's status, amounts and adjustments, and whether the payment balances. For an 837: each claim's patient, provider, diagnoses and lines. For an 834: each member's maintenance type and coverages. For an 820: the remittances, and whether they balance. For a 999: each transaction's result and errors, down to the bad element. For a 277: each status. For a 271: each person's benefits. |
+| `find_segments` | Segments by ID, optionally where one element has a value: every `CLP` with `CLP02` = 4 (denied), every `CAS` with `CAS01` = `PR`. |
+| `get_segment` | One segment's elements by position (`CLP01`, `CLP02`…), with composites split (`SVC01-1`, `SVC01-2`). |
+| `get_transaction` | The segments themselves, split into header, loops and trailer as the tab shows them, a page of loops at a time. |
+| `check_file` | The envelope's counts and control numbers: `SE01`/`SE02`, `GE01`/`GE02` and `IEA01`/`IEA02`, and every `ST`, `GS` and `ISA` closed. |
+
+Segments are numbered from 1 in file order in everything the tools return, so an agent can go from a summary or a
+search straight to `get_segment`.
+
+These files usually carry personal health information, and anything a tool returns goes to the model the agent
+uses. Point the server at a model your organisation is allowed to send PHI to, such as one under a business
+associate agreement or one running on your own machine, or give it files with the identifiers removed.
+
 ## Trying it
 
 Open any file in [`tests/X12Explorer.Tests/Samples`](tests/X12Explorer.Tests/Samples), or drop it on the window.
@@ -227,6 +259,7 @@ You need the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 ```bash
 dotnet build X12Explorer.slnx
 dotnet run --project src/X12Explorer [file]
+dotnet run --project src/X12Explorer -- --mcp --root tests/X12Explorer.Tests/Samples   # the MCP server
 dotnet test X12Explorer.slnx
 ```
 
@@ -238,8 +271,12 @@ dotnet test X12Explorer.slnx
   - `Views`: the text of the three boxes.
   - `Elements`: finds the segment under the caret and lists its elements.
   - `TransactionKind`: the nine tabs.
+  - `Checks`: the envelope's counts and control numbers.
+- `src/X12Explorer.Mcp`: the MCP server: its tools (`X12Tools`), the per-transaction summaries (`Summaries`), the
+  folder it reads from (`Workspace`) and the `--mcp` command line.
 - `src/X12Explorer`: the window (`MainWindow`) and one `TransactionPage` per tab, built in code.
-- `tests/X12Explorer.Tests`: xUnit tests for the reader, plus headless window tests. Set `X12_SHOTS` to a folder to
+- `tests/X12Explorer.Tests`: xUnit tests for the reader, the MCP server (through an MCP client) and, headless, the
+  window. Set `X12_SHOTS` to a folder to
   save pictures of the window; the screenshots here come from them.
 - `legacy/`: the original Windows Forms program (VB.NET, .NET Framework 4.8), for reference.
 

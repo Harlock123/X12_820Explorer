@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/X12Explorer.Core/X12Explorer.Core.csproj" />
+    <Project Path="src/X12Explorer.Mcp/X12Explorer.Mcp.csproj" />
     <Project Path="src/X12Explorer/X12Explorer.csproj" />
   </Folder>
   <Folder Name="/tests/">

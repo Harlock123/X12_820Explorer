@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The MCP server: AI agents read X12 files through it, over stdio, with no window. No Avalonia: it sits beside
+       the window on X12Explorer.Core, and the app starts it when given the mcp switch. -->
+  <PropertyGroup>
+    <RootNamespace>X12Explorer.Mcp</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\X12Explorer.Core\X12Explorer.Core.csproj" />
+    <!-- The official C# MCP SDK's core: the server and its transports, without the hosting extras. -->
+    <PackageReference Include="ModelContextProtocol.Core" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="X12Explorer.Tests" />
+  </ItemGroup>
+</Project>
