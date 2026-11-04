@@ -34,6 +34,24 @@ public sealed class X12File
 
     public static X12File Load(string path) => Parse(File.ReadAllText(path));
 
+    /// <summary>True when the file's first characters, past white space and a byte order mark, are ISA or ST.</summary>
+    public static bool LooksLikeX12(string path)
+    {
+        try
+        {
+            using var reader = new StreamReader(path);
+            var buffer = new char[64];
+            var read = reader.ReadBlock(buffer, 0, buffer.Length);
+            var head = new string(buffer, 0, read).TrimStart('\uFEFF', ' ', '\t', '\r', '\n');
+            return head.StartsWith("ISA", StringComparison.Ordinal)
+                || (head.StartsWith("ST", StringComparison.Ordinal) && head.Length > 2 && !char.IsLetterOrDigit(head[2]));
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
     public static X12File Parse(string text)
     {
         var delimiters = Delimiters.Detect(text);

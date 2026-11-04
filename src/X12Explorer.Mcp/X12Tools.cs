@@ -82,6 +82,7 @@ public sealed class X12Tools(Workspace files)
             return new JsonObject
             {
                 ["file"] = file,
+                ["deidentified"] = files.Deidentifier != null,
                 ["segments"] = x.Segments.Count,
                 ["delimiters"] = new JsonObject
                 {

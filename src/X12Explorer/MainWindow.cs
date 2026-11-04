@@ -10,8 +10,8 @@ using X12Explorer.Core;
 namespace X12Explorer;
 
 /// <summary>
-/// The window: a tab for each transaction (<see cref="TransactionKind.All"/>), a tool bar with Open and the font
-/// buttons, and a status line. A file goes to the tab its ST01 names, whichever Open button opened it, and files can
+/// The window: a tab for each transaction (<see cref="TransactionKind.All"/>), a tool bar with Open, De-identify and
+/// the font buttons, and a status line. A file goes to the tab its ST01 names, whichever Open button opened it, and files can
 /// be dropped on the window too. Built in code; its controls are public so tests can drive them.
 /// </summary>
 public sealed class MainWindow : Window
@@ -24,12 +24,19 @@ public sealed class MainWindow : Window
     public IReadOnlyDictionary<string, TransactionPage> Pages { get; }
 
     public Button OpenButton { get; } = new() { Content = "Open…" };
+    public Button DeidentifyButton { get; } = new() { Content = "De-identify…", IsEnabled = false };
     public Button SmallerButton { get; } = new() { Content = "A−", MinWidth = 40 };
     public Button BiggerButton { get; } = new() { Content = "A+", MinWidth = 40 };
     public TextBlock Message { get; } = new() { Foreground = Look.Heading, FontSize = 12, TextTrimming = TextTrimming.CharacterEllipsis };
 
     /// <summary>Asks for a file to open; tests answer it themselves.</summary>
     public Func<Task<string?>> PickFile { get; set; }
+
+    /// <summary>Asks where to save a de-identified copy, given the name to suggest; tests answer it themselves.</summary>
+    public Func<string, string, Task<string?>> PickSaveFile { get; set; }
+
+    /// <summary>One key for the window's life, so copies saved in one session use the same stand-ins.</summary>
+    private readonly Deidentifier _deidentifier = new();
 
     public MainWindow(string? open = null)
     {
@@ -40,6 +47,7 @@ public sealed class MainWindow : Window
         MinHeight = 480;
         Background = Look.Window;
         PickFile = AskForFile;
+        PickSaveFile = AskWhereToSave;
 
         var pages = new Dictionary<string, TransactionPage>();
         var items = new List<TabItem>();
@@ -52,6 +60,7 @@ public sealed class MainWindow : Window
         }
         Pages = pages;
         Tabs.ItemsSource = items;
+        Tabs.SelectionChanged += (_, _) => DeidentifyButton.IsEnabled = Current.File != null;
 
         var root = new DockPanel();
         var tools = BuildToolBar();
@@ -117,12 +126,50 @@ public sealed class MainWindow : Window
 
         page.Load(path, file);
         Tabs.SelectedIndex = TransactionKind.All.ToList().IndexOf(page.Kind);
+        DeidentifyButton.IsEnabled = true;
 
         var d = file.Delimiters;
         var transactions = file.Transactions.Count == 1 ? "1 transaction" : $"{file.Transactions.Count} transactions";
         var delimiters = d.LineTerminated ? $"segments end at line breaks, elements {d.Element}" : $"segments end {d.Segment}, elements {d.Element}";
         var mixed = file.Transactions.Count(t => t.Code != code) is > 0 and var others ? $"; {others} of another type" : "";
         Note($"{Path.GetFileName(path)}: {page.Kind.Title}, {transactions}{mixed}, {file.Segments.Count} segments ({delimiters}).");
+        return true;
+    }
+
+    /// <summary>
+    /// Saves a de-identified copy of the file on the showing tab where <see cref="PickSaveFile"/> says, then opens the
+    /// copy. Returns false, with the reason on the status line, when there's nothing to save or it can't be written.
+    /// </summary>
+    public async Task<bool> DeidentifyCurrent()
+    {
+        if (Current.File == null || Current.FileName.Text is not { Length: > 0 } source)
+        {
+            Note("Open a file first: De-identify saves a copy of the file on the showing tab.", error: true);
+            return false;
+        }
+        var suggested = Path.GetFileNameWithoutExtension(source) + "-deidentified" + Path.GetExtension(source);
+        if (await PickSaveFile(source, suggested) is not { } target) return false;
+        if (string.Equals(Path.GetFullPath(target), Path.GetFullPath(source), StringComparison.Ordinal))
+        {
+            Note("Choose another name: the de-identified copy can't replace the original.", error: true);
+            return false;
+        }
+
+        Deidentified result;
+        try
+        {
+            result = _deidentifier.Load(source);
+            File.WriteAllText(target, result.Text);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Note($"Couldn't save {Path.GetFileName(target)}: {ex.Message}", error: true);
+            return false;
+        }
+
+        Open(target);
+        Note($"Saved and opened a de-identified copy, {Path.GetFileName(target)}: replaced {result.Summary} (dates moved back " +
+             $"{-_deidentifier.ShiftDays} days). Check it before you share it.");
         return true;
     }
 
@@ -148,14 +195,16 @@ public sealed class MainWindow : Window
         var fonts = new TextBlock { Text = "Text size", Foreground = Look.Heading, FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
 
         ToolTip.SetTip(OpenButton, "Open a file (Ctrl+O). It goes to the tab its ST segment names.");
+        ToolTip.SetTip(DeidentifyButton, "Save a copy of this tab's file with people's names, IDs, addresses and dates replaced, for sharing or test data.");
         ToolTip.SetTip(SmallerButton, "Smaller text (Ctrl+−)");
         ToolTip.SetTip(BiggerButton, "Bigger text (Ctrl+=)");
         OpenButton.Click += async (_, _) => await OpenPicked();
+        DeidentifyButton.Click += async (_, _) => await DeidentifyCurrent();
         SmallerButton.Click += (_, _) => SetFontSize(_fontSize - 1);
         BiggerButton.Click += (_, _) => SetFontSize(_fontSize + 1);
 
         var bar = new DockPanel();
-        var left = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { title, OpenButton } };
+        var left = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, Children = { title, OpenButton, DeidentifyButton } };
         var right = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6, Children = { fonts, SmallerButton, BiggerButton } };
         DockPanel.SetDock(right, Dock.Right);
         bar.Children.Add(right);
@@ -189,6 +238,18 @@ public sealed class MainWindow : Window
             ]
         });
         return files.Count > 0 ? files[0].TryGetLocalPath() : null;
+    }
+
+    private async Task<string?> AskWhereToSave(string source, string suggested)
+    {
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save a de-identified copy",
+            SuggestedFileName = suggested,
+            SuggestedStartLocation = Path.GetDirectoryName(source) is { } folder ? await StorageProvider.TryGetFolderFromPathAsync(folder) : null,
+            ShowOverwritePrompt = true,
+        });
+        return file?.TryGetLocalPath();
     }
 
     private async void OnKey(object? sender, KeyEventArgs e)

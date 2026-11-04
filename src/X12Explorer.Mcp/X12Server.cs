@@ -1,4 +1,5 @@
 using System.Reflection;
+using X12Explorer.Core;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -45,9 +46,16 @@ public static class X12Server
         Version = typeof(X12Server).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "1.0",
     };
 
+    /// <summary>Added to the instructions when the server de-identifies what it reads.</summary>
+    public const string DeidentifiedNote = """
+
+        This server de-identifies every file as it reads it: people's names, member IDs, account and claim numbers, street addresses, phone numbers and free-text notes are replaced with consistent stand-ins (the same member ID always gets the same stand-in, so files still match up), ZIP codes keep three digits, birth dates keep only their year, and all other dates are moved back by the same number of days. Amounts, codes, diagnoses, providers and payers are as in the file. Say so when you quote names, IDs or dates.
+        """;
+
     public static McpServerOptions Options(Workspace files)
     {
-        var options = new McpServerOptions { ServerInfo = Info, ServerInstructions = Instructions, ToolCollection = [] };
+        var instructions = files.Deidentifier == null ? Instructions : Instructions + DeidentifiedNote;
+        var options = new McpServerOptions { ServerInfo = Info, ServerInstructions = instructions, ToolCollection = [] };
         foreach (var tool in Tools(files)) options.ToolCollection.Add(tool);
         return options;
     }
@@ -61,8 +69,9 @@ public static class X12Server
 }
 
 /// <summary>
-/// The command line that starts the server instead of the window: <c>X12Explorer --mcp [--root FOLDER]</c>. The folder
-/// is the one files are read from: the current folder unless <c>--root</c> names another.
+/// The command line that starts the server instead of the window: <c>X12Explorer --mcp [--root FOLDER] [--deidentify]</c>.
+/// The folder is the one files are read from: the current folder unless <c>--root</c> names another. With
+/// <c>--deidentify</c> every file is de-identified as it is read, with one random key for the session.
 /// </summary>
 public static class McpCommandLine
 {
@@ -72,6 +81,7 @@ public static class McpCommandLine
     public static async Task<int> RunAsync(string[] args, Stream input, Stream output, TextWriter errors, CancellationToken cancel = default)
     {
         string? root = null;
+        var deidentify = false;
         for (var i = 0; i < args.Length; i++)
         {
             if (args[i].Equals("--mcp", StringComparison.OrdinalIgnoreCase)) continue;
@@ -80,14 +90,19 @@ public static class McpCommandLine
                 root = args[++i];
                 continue;
             }
-            await errors.WriteLineAsync($"X12Explorer --mcp: unknown argument \"{args[i]}\". Usage: X12Explorer --mcp [--root FOLDER]");
+            if (args[i].Equals("--deidentify", StringComparison.OrdinalIgnoreCase))
+            {
+                deidentify = true;
+                continue;
+            }
+            await errors.WriteLineAsync($"X12Explorer --mcp: unknown argument \"{args[i]}\". Usage: X12Explorer --mcp [--root FOLDER] [--deidentify]");
             return 2;
         }
 
         Workspace files;
         try
         {
-            files = new Workspace(root ?? Environment.CurrentDirectory);
+            files = new Workspace(root ?? Environment.CurrentDirectory, deidentify ? new Deidentifier() : null);
         }
         catch (Exception e) when (e is IOException or ArgumentException or UnauthorizedAccessException)
         {
@@ -96,7 +111,7 @@ public static class McpCommandLine
         }
 
         // Only MCP messages go to stdout; anything for a person goes to stderr.
-        await errors.WriteLineAsync($"X12 Explorer MCP server, reading {files.Root}");
+        await errors.WriteLineAsync($"X12 Explorer MCP server, reading {files.Root}{(deidentify ? ", de-identified" : "")}");
         await X12Server.RunAsync(new StreamServerTransport(input, output, X12Server.Name), files, cancel);
         return 0;
     }

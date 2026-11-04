@@ -8,8 +8,9 @@ how the code is put together and the rules that keep it working.
 A viewer for HIPAA X12 EDI files in C# on .NET 10 and Avalonia 12. It has one tab per transaction: 820, 834, 835,
 270, 271, 837, 276, 277 and 999. Each tab shows the file's header (envelope, ST, and everything before the first
 loop), its loops, and its trailer (SE, GE, IEA), plus the elements of the segment under the caret. It runs on
-Windows, macOS and Linux. Started with `--mcp` it is an MCP server instead, with no window, so AI agents can read
-the same files. The original Windows Forms program is in `legacy/` and is no longer built.
+Windows, macOS and Linux. De-identify saves a copy of a file with people's names, identifiers, addresses and dates
+replaced. Started with `--mcp` it is an MCP server instead, with no window, so AI agents can read the same files
+(de-identified as they are read, with `--deidentify`). The original Windows Forms program is in `legacy/` and is no longer built.
 
 ## Commands
 
@@ -17,7 +18,8 @@ the same files. The original Windows Forms program is in `legacy/` and is no lon
 dotnet build X12Explorer.slnx
 dotnet test X12Explorer.slnx
 dotnet run --project src/X12Explorer [file]
-dotnet run --project src/X12Explorer -- --mcp --root FOLDER   # the MCP server on stdio
+dotnet run --project src/X12Explorer -- --mcp --root FOLDER [--deidentify]   # the MCP server on stdio
+dotnet run --project src/X12Explorer -- --deidentify INPUT OUTPUT             # de-identified copies, file or folder
 X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of the window, headless
 ```
 
@@ -41,6 +43,11 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
     starts with a segment per line. A kind can also name a closing segment (the 999's `AK9`) that ends the loops
     and goes to the trailer. `Codes` lists the codes for messages.
   - `Checks.cs`: the envelope's bookkeeping (SE, GE and IEA counts and control numbers), as `Problem`s.
+  - `Deidentifier.cs`: replaces people's names, identifiers, addresses, dates, contact numbers and notes. It
+    rewrites segments in place in the original text, so the layout survives. Stand-ins come from an HMAC with the
+    instance's key, so one instance gives the same stand-in for the same value in every file. The `Pass` class
+    tracks where in a file it is (the transaction, the HL level, whether the last NM1 was a person).
+  - `DeidentifyCommand.cs`: `--deidentify INPUT OUTPUT`, for a file or a folder.
 - `src/X12Explorer.Mcp/`: the MCP server, on the official C# SDK (`ModelContextProtocol.Core`), with no Avalonia.
   - `X12Server.cs`: the server's instructions and options. `McpCommandLine` parses `--mcp [--root FOLDER]` and
     serves on the streams it is given (stdio from `Program.Main`, pipes in the tests).
@@ -48,7 +55,8 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
     are snake_case because they are the JSON names agents see.
   - `Summaries.cs`: `summarize`, one reader per transaction type.
   - `Codes.cs`: the meanings of the code lists the summaries report.
-  - `Workspace.cs`: the folder files are read from. `Resolve` refuses anything outside it.
+  - `Workspace.cs`: the folder files are read from. `Resolve` refuses anything outside it. With a
+    `Deidentifier` (`--deidentify`), `Load` de-identifies each file before parsing it.
 - `src/X12Explorer/`: the window, built in code with no XAML.
   - `MainWindow.cs`:
     - The tool bar (Open, text size), the tabs and the status line.
@@ -60,6 +68,8 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
 - `tests/X12Explorer.Tests/`: xUnit v3.
   - `ParserTests` covers delimiters, splitting, transactions, views and elements.
   - `WindowTests` drives the window on Avalonia.Headless.
+  - `DeidentifierTests` checks what is replaced and what isn't, the stand-ins matching across files, the dates,
+    the layout, and the command line.
   - `McpTests` drives the server through an MCP client over in-memory pipes, on copies of the samples in a temp
     folder, and once starts the real program with `--mcp`.
   - `Samples/*.edi`: made-up files, one per transaction.
@@ -89,6 +99,13 @@ X12_SHOTS=/tmp/shots dotnet test X12Explorer.slnx    # also saves pictures of th
 - **Numbers count from 1.** Segment, transaction and loop numbers in tool results and arguments count from 1, as
   a person reading the file would. `Segment.Index` counts from 0, so add 1 on the way out.
 - **New tools and summaries** need a test in `McpTests` and a line in the README's tool table.
+- **De-identifying never changes the structure.** Same segments, same element counts, same envelope, same
+  amounts and codes. `DeidentifierTests` checks this on every sample. Replace values in place; don't drop or add
+  segments, and keep stand-ins the shape of what they replace.
+- **De-identifying never writes over a file.** Neither the window nor `--deidentify` saves over the original or an
+  existing file.
+- **A new place for identifiers** (a segment or qualifier a transaction uses for a person) goes in `Deidentifier`,
+  with a test and a row in the README's table if it's a new kind.
 - **No real files in the repository.** Real X12 files carry personal health information. Samples must use made-up
   names, member IDs and amounts.
 - **`legacy/` is for reference.** Don't change it; port the behaviour into `src/` instead.

@@ -224,6 +224,40 @@ public sealed class McpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task With_deidentify_no_tool_shows_the_real_names_or_IDs()
+    {
+        var up = new Wire();
+        var down = new Wire();
+        using var stop = new CancellationTokenSource();
+        var server = Task.Run(() => McpCommandLine.RunAsync(["--mcp", "--root", _folder, "--deidentify"], up.Reader, down.Writer, TextWriter.Null, stop.Token));
+        try
+        {
+            await using var client = await McpClient.CreateAsync(new StreamClientTransport(up.Writer, down.Reader));
+            Assert.Contains("de-identifies every file", client.ServerInstructions);
+
+            var opened = await Json(client, "open_file", new { file = "in/remittance-835.edi" });
+            Assert.True((bool)opened["deidentified"]!);
+
+            var summary = await Json(client, "summarize", new { file = "in/remittance-835.edi" });
+            var patient = (string)summary["claims"]![0]!["patient"]!;
+            Assert.DoesNotContain("DOE", patient);
+            Assert.True((bool)summary["balanced"]!);
+            Assert.Equal("245.00", (string)summary["payment"]!["amount"]!);
+
+            var found = await Json(client, "find_segments", new { file = "in/membership-834.edi", segment_id = "NM1" });
+            Assert.DoesNotContain(found["matches"]!.AsArray(), m => ((string)m!["text"]!).Contains("DOE"));
+        }
+        finally
+        {
+            await stop.CancelAsync();
+            try { await server.WaitAsync(TimeSpan.FromSeconds(5)); }
+            catch (Exception e) when (e is OperationCanceledException or TimeoutException or IOException) { }
+            up.Dispose();
+            down.Dispose();
+        }
+    }
+
+    [Fact]
     public async Task Rejects_unknown_arguments_on_the_command_line()
     {
         var errors = new StringWriter();
@@ -252,9 +286,11 @@ public sealed class McpTests : IAsyncLifetime
 
     // ───────────────────────────── helpers ─────────────────────────────
 
-    private async Task<JsonObject> Json(string tool, object? args = null)
+    private Task<JsonObject> Json(string tool, object? args = null) => Json(_client, tool, args);
+
+    private static async Task<JsonObject> Json(McpClient client, string tool, object? args = null)
     {
-        var result = await Call(tool, args);
+        var result = await Call(client, tool, args);
         Assert.True(result.IsError != true, $"{tool} failed: {Text(result)}");
         return (JsonObject)JsonNode.Parse(Text(result))!;
     }
@@ -266,10 +302,12 @@ public sealed class McpTests : IAsyncLifetime
         return Text(result);
     }
 
-    private Task<CallToolResult> Call(string tool, object? args)
+    private Task<CallToolResult> Call(string tool, object? args) => Call(_client, tool, args);
+
+    private static Task<CallToolResult> Call(McpClient client, string tool, object? args)
     {
         var dict = args == null ? null : JsonSerializer.SerializeToElement(args).EnumerateObject().ToDictionary(p => p.Name, p => (object?)p.Value);
-        return _client.CallToolAsync(tool, dict).AsTask();
+        return client.CallToolAsync(tool, dict).AsTask();
     }
 
     private static string Text(CallToolResult r) => string.Join("\n", r.Content.OfType<TextContentBlock>().Select(t => t.Text));

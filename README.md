@@ -214,6 +214,42 @@ The receiver of a batch says whether each transaction in it passed its checks an
 
 ![The 999 tab: one claim accepted, one rejected, with an IK4 error's elements and AK9 in the trailer](Screenshots/acknowledgment-999.png)
 
+## De-identifying
+
+Real X12 files carry protected health information. **De-identify…** on the tool bar saves a copy of the file on the
+showing tab with the identifiers HIPAA's Safe Harbor method lists replaced, and opens the copy, so a file can be
+shared with a vendor, turned into test data, attached to a ticket or read by an AI model.
+
+| What | Where in the file | Becomes |
+|---|---|---|
+| People's names | `NM1` for the insured, patient, dependent, guardian and similar | A made-up name; organisations' and providers' names stay |
+| Member IDs, SSNs | `NM109`, `ENT04`, person `REF`s (`0F`, `1L`, `SY`, `EA`…) | A stand-in of the same shape: letters for letters, digits for digits |
+| Account and claim numbers | `CLM01`, `CLP01`, `CLP07`, `REF*1K`, the patient's `TRN`, a 999's `CTX` | The same kind of stand-in |
+| Street addresses and cities | `N3`, `N4` after a person | A made-up street; `ANYTOWN`; the ZIP code's first three digits, or `000` where those cover fewer than 20,000 people |
+| Dates | `DTP`, `DTM`, `STC02` | Moved back by one number of days (30 to 180), so intervals stay true |
+| Birth dates | `DMG02` | January 1 of the birth year; anyone over 89 shown as 90 |
+| Phone numbers and e-mail | `PER` after a person | Stand-ins |
+| Free text | `NTE`, `MSG`, `K3` | `NOTE REMOVED` |
+
+The stand-ins are consistent: the same member ID, name or account number gets the same replacement everywhere, in
+every file de-identified in one session, so an 837's claims still match their 835 payments, 277 statuses and 999
+errors. They come from a keyed hash with a random key that is never saved, so they can't be traced back.
+Amounts, procedure and diagnosis codes, providers, payers and the envelope stay as they were, and the copy keeps
+the original's layout, delimiters and segment counts.
+
+![The 835 tab showing a de-identified copy: made-up patient names, IDs and claim numbers, with the amounts as they were](Screenshots/deidentified-835.png)
+
+From the command line, one file or a whole folder, with one key for the lot:
+
+```
+X12Explorer --deidentify claims.edi claims-deidentified.edi
+X12Explorer --deidentify incoming/ deidentified/
+```
+
+It never writes over a file that exists. It covers the identifiers these transactions carry in their usual places,
+but it can't know what a sender put somewhere unusual, and a 999's `IK404` keeps the bad value it reports. Check
+the result before you share it.
+
 ## AI agents (MCP)
 
 X12 Explorer is also an [MCP](https://modelcontextprotocol.io/) server, so an AI agent such as Claude Code can
@@ -226,6 +262,9 @@ For Claude Code:
 ```
 claude mcp add x12explorer -- /path/to/X12Explorer --mcp --root /path/to/edi-files
 ```
+
+Add `--deidentify` and every file is [de-identified](#de-identifying) as it is read, so nothing a tool returns
+carries the original names, identifiers, addresses or dates, while the totals, statuses and errors still add up.
 
 The tools:
 
@@ -244,7 +283,7 @@ search straight to `get_segment`.
 
 These files usually carry personal health information, and anything a tool returns goes to the model the agent
 uses. Point the server at a model your organisation is allowed to send PHI to, such as one under a business
-associate agreement or one running on your own machine, or give it files with the identifiers removed.
+associate agreement or one running on your own machine, or start it with `--deidentify`.
 
 ## Trying it
 
@@ -260,6 +299,7 @@ You need the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 dotnet build X12Explorer.slnx
 dotnet run --project src/X12Explorer [file]
 dotnet run --project src/X12Explorer -- --mcp --root tests/X12Explorer.Tests/Samples   # the MCP server
+dotnet run --project src/X12Explorer -- --deidentify tests/X12Explorer.Tests/Samples /tmp/deidentified
 dotnet test X12Explorer.slnx
 ```
 
@@ -272,10 +312,12 @@ dotnet test X12Explorer.slnx
   - `Elements`: finds the segment under the caret and lists its elements.
   - `TransactionKind`: the nine tabs.
   - `Checks`: the envelope's counts and control numbers.
+  - `Deidentifier`: replaces names, identifiers, addresses and dates; `DeidentifyCommand` is `--deidentify`.
 - `src/X12Explorer.Mcp`: the MCP server: its tools (`X12Tools`), the per-transaction summaries (`Summaries`), the
   folder it reads from (`Workspace`) and the `--mcp` command line.
-- `src/X12Explorer`: the window (`MainWindow`) and one `TransactionPage` per tab, built in code.
-- `tests/X12Explorer.Tests`: xUnit tests for the reader, the MCP server (through an MCP client) and, headless, the
+- `src/X12Explorer`: the window (`MainWindow`, with Open and De-identify) and one `TransactionPage` per tab, built
+  in code.
+- `tests/X12Explorer.Tests`: xUnit tests for the reader, the de-identifier, the MCP server (through an MCP client) and, headless, the
   window. Set `X12_SHOTS` to a folder to
   save pictures of the window; the screenshots here come from them.
 - `legacy/`: the original Windows Forms program (VB.NET, .NET Framework 4.8), for reference.

@@ -195,4 +195,44 @@ public class WindowTests
         Assert.False(w.SmallerButton.IsEnabled);
         w.Close();
     }
+
+    [AvaloniaFact]
+    public void De_identify_saves_a_copy_and_opens_it()
+    {
+        var w = Show();
+        Assert.False(w.DeidentifyButton.IsEnabled);
+
+        var source = Sample("remittance-835.edi");
+        Assert.True(w.Open(source));
+        Assert.True(w.DeidentifyButton.IsEnabled);
+        Assert.Contains("DOE*JANE", w.Current.LoopsBox.Text);
+
+        var target = Path.Combine(Path.GetTempPath(), "x12explorer-samples", "remittance-835-deidentified.edi");
+        File.Delete(target);
+        string? suggested = null;
+        w.PickSaveFile = (_, name) =>
+        {
+            suggested = name;
+            return Task.FromResult<string?>(target);
+        };
+        w.DeidentifyButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+        Pump();
+
+        Assert.Equal("remittance-835-deidentified.edi", suggested);
+        Assert.True(File.Exists(target));
+        Assert.Equal(target, w.Current.FileName.Text);
+        Assert.DoesNotContain("DOE", w.Current.LoopsBox.Text);
+        Assert.Contains("CLP*", w.Current.LoopsBox.Text);
+        Assert.StartsWith("Saved and opened a de-identified copy, remittance-835-deidentified.edi: replaced 2 names", w.Message.Text);
+        Assert.Contains("Check it before you share it.", w.Message.Text);
+        Assert.Contains("DOE*JANE", File.ReadAllText(source));
+        Shot(w, "deidentified-835");
+
+        // It won't save over the file it was made from.
+        w.PickSaveFile = (_, _) => Task.FromResult<string?>(target);
+        Assert.False(w.DeidentifyCurrent().GetAwaiter().GetResult());
+        Assert.Contains("can't replace the original", w.Message.Text);
+        w.Close();
+        File.Delete(target);
+    }
 }
