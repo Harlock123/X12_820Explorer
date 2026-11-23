@@ -218,13 +218,14 @@ internal static class Summaries
                             if (s[i].Trim().Length > 0) Add(claim, "diagnoses", JsonValue.Create(Composite(s[i])));
                         break;
                     case "SV1" or "SV2" or "SV3" when claim != null:
-                        // SV2 (institutional) puts the revenue code first and the procedure second.
+                        // SV2 (institutional) puts the revenue code first and the procedure second; SV3 (dental) has
+                        // the tooth area in SV304 and its quantity in SV306.
                         var procedure = s.Id == "SV2" ? s[2] : s[1];
                         line = new JsonObject
                         {
                             ["procedure"] = Composite(procedure),
                             ["charged"] = Money(s.Id == "SV2" ? s[3] : s[2]),
-                            ["units"] = s.Id == "SV2" ? s[5] : s[4],
+                            ["units"] = s.Id switch { "SV2" => s[5], "SV3" => s[6], _ => s[4] },
                         };
                         if (s.Id == "SV2") line["revenue_code"] = s[1];
                         Add(claim, "lines", line);
@@ -413,7 +414,7 @@ internal static class Summaries
                         });
                         break;
                     case "IK5" when set != null:
-                        set["result"] = Coded(s[1], Codes.Acknowledgment);
+                        set["result"] = Coded(s[1], Codes.TransactionAcknowledgment);
                         var reasons = new JsonArray();
                         for (var i = 2; i < s.Elements.Length; i++)
                             if (s[i].Trim().Length > 0) reasons.Add(Coded(s[i], SetErrors));
@@ -422,7 +423,7 @@ internal static class Summaries
                     case "AK9":
                         result["group_result"] = new JsonObject
                         {
-                            ["result"] = Coded(s[1], Codes.Acknowledgment),
+                            ["result"] = Coded(s[1], Codes.GroupAcknowledgment),
                             ["included"] = s[2],
                             ["received"] = s[3],
                             ["accepted"] = s[4],
@@ -489,6 +490,24 @@ internal static class Summaries
             ["5"] = "One or More Segments in Error",
             ["6"] = "Missing or Invalid Transaction Set Identifier",
             ["7"] = "Missing or Invalid Transaction Set Control Number",
+            ["8"] = "Authentication Key Name Unknown",
+            ["9"] = "Encryption Key Name Unknown",
+            ["10"] = "Requested Service (Authentication or Encrypted) Not Available",
+            ["11"] = "Unknown Security Recipient",
+            ["12"] = "Incorrect Message Length (Encryption Only)",
+            ["13"] = "Message Authentication Code Failed",
+            ["15"] = "Unknown Security Originator",
+            ["16"] = "Syntax Error in Decrypted Text",
+            ["17"] = "Security Not Supported",
+            ["18"] = "Transaction Set not in Functional Group",
+            ["19"] = "Invalid Transaction Set Implementation Convention Reference",
+            ["23"] = "Transaction Set Control Number Not Unique within the Functional Group",
+            ["24"] = "S3E Security End Segment Missing for S3S Security Start Segment",
+            ["25"] = "S3S Security Start Segment Missing for S3E Security End Segment",
+            ["26"] = "S4E Security End Segment Missing for S4S Security Start Segment",
+            ["27"] = "S4S Security Start Segment Missing for S4E Security End Segment",
+            ["I5"] = "Implementation One or More Segments in Error",
+            ["I6"] = "Implementation Convention Not Supported",
         };
 
         // ───────────────────────────── 277 ─────────────────────────────
